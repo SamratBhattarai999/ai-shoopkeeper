@@ -71,8 +71,8 @@ pipeline {
                 sh 'docker ps --filter name=ai-shopkeeper-app'
             }
         }
-    }
-   stage('Deploy to Minikube') {
+    
+      stage('Deploy to Minikube') {
             steps {
                 sh '''
                     export KUBECONFIG=/var/lib/jenkins/.kube/config
@@ -82,7 +82,7 @@ pipeline {
                 '''
             }
         }
-
+     }
     post {
         always {
             sh 'docker logout || true'

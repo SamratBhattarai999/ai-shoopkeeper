@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_HUB_USER = 'YOUR_DOCKERHUB_USERNAME'
+        DOCKER_HUB_USER = 'samratbhattarai999'
         IMAGE_NAME      = 'ai-shopkeeper'
         REGISTRY        = "${DOCKER_HUB_USER}/${IMAGE_NAME}"
         BUILD_TAG       = "${BUILD_NUMBER}"

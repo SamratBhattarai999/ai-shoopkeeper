@@ -73,16 +73,16 @@ pipeline {
         }
     
       stage('Deploy to Minikube') {
-            steps {
-                sh '''
-                    export KUBECONFIG=/var/lib/jenkins/.kube/config
-                    kubectl apply --validate=false -f k8s/deployment.yaml
-                    kubectl apply --validate=false -f k8s/service.yaml
-                    kubectl rollout restart deployment/ai-shopkeeper
-                '''
+                steps {
+                    sh '''
+                        export KUBECONFIG=/var/lib/jenkins/.kube/config
+                        kubectl config use-context minikube || true
+                        kubectl apply --validate=false -f k8s/deployment.yaml
+                        kubectl apply --validate=false -f k8s/service.yaml
+                        kubectl rollout restart deployment/ai-shopkeeper
+                    '''
+                }
             }
-        }
-     }
     post {
         always {
             sh 'docker logout || true'

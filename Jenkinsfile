@@ -6,7 +6,6 @@ pipeline {
         IMAGE_NAME      = 'ai-shopkeeper'
         REGISTRY        = "${DOCKER_HUB_USER}/${IMAGE_NAME}"
         BUILD_TAG       = "${BUILD_NUMBER}"
-        KUBECONFIG      = '/var/lib/jenkins/.kube/config'
     }
 
     stages {
@@ -54,23 +53,22 @@ pipeline {
             }
         }
 
-        stage('Deploy to Minikube') {
+        stage('Deploy Container') {
             steps {
                 sh '''
-                    sed -i "s|DOCKER_HUB_USERNAME/ai-shopkeeper:IMAGE_TAG|${REGISTRY}:${BUILD_TAG}|g" k8s/deployment.yaml
-                    kubectl apply -f k8s/deployment.yaml
-                    kubectl apply -f k8s/service.yaml
-                    kubectl rollout status deployment/ai-shopkeeper-deployment --timeout=120s
+                    # Stop and remove old container if running
+                    docker stop ai-shopkeeper-app || true
+                    docker rm ai-shopkeeper-app || true
+                    
+                    # Run the fresh container from Docker Hub
+                    docker run -d -p 5000:5000 --name ai-shopkeeper-app ${REGISTRY}:latest
                 '''
             }
         }
 
         stage('Verification') {
             steps {
-                sh '''
-                    kubectl get pods -l app=ai-shopkeeper
-                    kubectl get svc ai-shopkeeper-service
-                '''
+                sh 'docker ps --filter name=ai-shopkeeper-app'
             }
         }
     }

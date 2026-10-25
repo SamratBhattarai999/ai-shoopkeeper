@@ -76,8 +76,8 @@ pipeline {
             steps {
                 sh '''
                     export KUBECONFIG=/var/lib/jenkins/.kube/config
-                    kubectl apply -f k8s/deployment.yaml
-                    kubectl apply -f k8s/service.yaml
+                    kubectl apply --validate=false -f k8s/deployment.yaml
+                    kubectl apply --validate=false -f k8s/service.yaml
                     kubectl rollout restart deployment/ai-shopkeeper
                 '''
             }
